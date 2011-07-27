@@ -1,1 +1,21 @@
-body { background-color: #EEE; }
+body {
+  background-color: #EEE;
+}
+
+.toppanel {
+  margin: 20px;
+}
+
+.pos {
+  display: inline-block;
+  text-align: right;
+  background-color: white;
+  padding: 4px 4px 2px 0;
+  margin-left: 10px;
+  width: 50px;
+  border: 1px solid #888;
+}
+
+.pospanel {
+  margin: 5px 0;
+}
