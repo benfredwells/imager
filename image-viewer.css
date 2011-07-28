@@ -19,3 +19,11 @@ body {
 .pospanel {
   margin: 5px 0;
 }
+
+.hidecursor {
+  cursor: none;
+}
+
+.done {
+  text-decoration: line-through;
+}

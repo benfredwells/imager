@@ -1,12 +1,13 @@
 <!doctype html>
 <html>
 <head>
+<script type="text/javascript" src="canvas-utils.js"></script>
 <script type="text/javascript" src="image-viewer.js"></script>
 <link rel="stylesheet" href="image-viewer.css" type="text/css" media="screen">
 </head>
 <body>
 <div class="toppanel">
-<canvas id="imagecanvas"></canvas>
+<canvas id="imagecanvas" class="hidecursor"></canvas>
 </div>
 <div class="toppanel">
 <div class="pospanel">
@@ -19,7 +20,7 @@
 <div class="toppanel">
 Outstanding items:
 <ul>
-<li>Show focus over current pixel.
+<li class="done">Show focus over current pixel.
 <li>Have it work with 'images' of any size, with zooming and scrollbars.
 <li>Exploring loading a hard-coded image path: does it work or have security
 problems?
