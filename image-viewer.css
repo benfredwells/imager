@@ -23,7 +23,3 @@ body {
 .hidecursor {
   cursor: none;
 }
-
-.done {
-  text-decoration: line-through;
-}
