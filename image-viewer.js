@@ -8,6 +8,7 @@ gvCanvas = null;
 gvContext = null;
 gvWidthRange = null;
 gvHeightRange = null;
+gvCanvasDiv = null;
 // TODO: get these from CSS
 BACKGROUND_COLOR = 'rgb(255,255,255)';
 BORDER_COLOR = 'rgb(128,128,128)';
@@ -135,6 +136,10 @@ function handleCanvasMouseMove(event) {
   highlightPixel(worldX, worldY, xPosEl, yPosEl);
 }
 
+function updateCanvasHolderSize() {
+  var screenX = window.
+}
+
 function updateImageSize(event) {
   gvHeight = gvHeightRange.value;
   gvWidth = gvWidthRange.value;
@@ -151,7 +156,8 @@ function initView() {
   gvCanvas = document.getElementById('imagecanvas');
   gvWidthRange = document.getElementById('width');
   gvHeightRange = document.getElementById('height');
-  if (gvHeightRange && gvWidthRange && gvCanvas && gvCanvas.getContext) {
+  gvCanvasDiv = document.getElementById('canvasdiv');
+  if (gvHeightRange && gvWidthRange && gvCanvas && gvCanvasDiv && gvCanvas.getContext) {
     // TODO: use level 2 events
     gvContext = gvCanvas.getContext('2d');
     updateCanvasSize();
