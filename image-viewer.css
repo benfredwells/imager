@@ -1,5 +1,6 @@
 body {
   background-color: #EEE;
+  margin: 0;
 }
 
 .toppanel {
@@ -14,6 +15,10 @@ body {
   margin-left: 10px;
   width: 50px;
   border: 1px solid #888;
+}
+
+#canvasdiv {
+  background-color: red;
 }
 
 .pospanel {

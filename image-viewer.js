@@ -9,6 +9,7 @@ gvContext = null;
 gvWidthRange = null;
 gvHeightRange = null;
 gvCanvasDiv = null;
+gvBottomInfo = null;
 // TODO: get these from CSS
 BACKGROUND_COLOR = 'rgb(255,255,255)';
 BORDER_COLOR = 'rgb(128,128,128)';
@@ -137,19 +138,68 @@ function handleCanvasMouseMove(event) {
 }
 
 function updateCanvasHolderSize() {
-  var screenX = window.
+  //TODO: Refactor this horrible code!
+  // Calculate max width and height. Assumes gap above and below gvBottomInfo
+  // is equal to its left offset.
+  var maxWidth = window.innerWidth - (2 * gvCanvasDiv.offsetLeft);
+  var maxHeight = window.innerHeight - gvCanvasDiv.offsetTop -
+      gvBottomInfo.clientHeight - (2 * gvBottomInfo.offsetLeft);
+  // Update width of holder div and add scroll bar if necessary
+  var width = canvasWidth();
+  var scrollX = false;
+  if (width > maxWidth) {
+    width = maxWidth;
+    scrollX = true;
+  }
+  gvCanvasDiv.style.setProperty('width', width + 'px');
+  gvCanvasDiv.style.setProperty('overflow-x', scrollX ? 'scroll' : 'hidden');
+  // Now update height and add scroll bar if necessary
+  var height = canvasHeight();
+  var scrollY = false;
+  if (height > maxHeight) {
+    height = maxHeight;
+    scrollY = true;
+  }
+  gvCanvasDiv.style.setProperty('height', height + 'px');
+  gvCanvasDiv.style.setProperty('overflow-y', scrollY ? 'scroll' : 'hidden');
+  // Update height for horizontal scroll bar
+  if (!scrollY && gvCanvasDiv.clientHeight < gvCanvasDiv.scrollHeight) {
+    height += gvCanvas.scrollHeight - gvCanvasDiv.clientHeight;
+    if (height > maxHeight) {
+      height = maxHeight;
+      scrollY = true;
+    }
+    gvCanvasDiv.style.setProperty('height', height + 'px');
+    gvCanvasDiv.style.setProperty('overflow-y', scrollY ? 'scroll' : 'hidden');
+  }
+  // Update width for vertical scroll bar
+  if (!scrollX && gvCanvasDiv.clientWidth < gvCanvasDiv.scrollWidth) {
+    width += gvCanvas.scrollWidth - gvCanvasDiv.clientWidth;
+    if (width > maxWidth) {
+      width = maxWidth;
+      scrollX = true;
+    }
+    gvCanvasDiv.style.setProperty('width', width + 'px');
+    gvCanvasDiv.style.setProperty('overflow-x', scrollX ? 'scroll' : 'hidden');
+  }
 }
 
 function updateImageSize(event) {
   gvHeight = gvHeightRange.value;
   gvWidth = gvWidthRange.value;
   updateCanvasSize();
+  updateCanvasHolderSize();
+}
+
+function handleResize(event) {
+  updateCanvasHolderSize();
 }
 
 function setupEvents() {
   gvCanvas.onmousemove = handleCanvasMouseMove;
   gvWidthRange.onchange = updateImageSize;
   gvHeightRange.onchange = updateImageSize;
+  window.onresize = handleResize;
 }
 
 function initView() {
@@ -157,10 +207,13 @@ function initView() {
   gvWidthRange = document.getElementById('width');
   gvHeightRange = document.getElementById('height');
   gvCanvasDiv = document.getElementById('canvasdiv');
-  if (gvHeightRange && gvWidthRange && gvCanvas && gvCanvasDiv && gvCanvas.getContext) {
-    // TODO: use level 2 events
+  gvBottomInfo = document.getElementById('bottominfo')
+  if (gvHeightRange && gvWidthRange && gvCanvas && gvCanvasDiv && gvBottomInfo &&
+      gvCanvas.getContext) {
+    // TODO: use DOM level 2 events
     gvContext = gvCanvas.getContext('2d');
     updateCanvasSize();
+    updateCanvasHolderSize();
     setupEvents();
   } else {
     document.writeln("Your browser doesn't seem up to scratch, sorry");
