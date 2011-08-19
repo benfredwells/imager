@@ -1,13 +1,14 @@
 // TODO: When I know how these should go into some sort of custom object
 gvWidth = 50;
 gvHeight = 50;
-gvZoom = 10;
+gvZoom = 5;
 gvCurrentX = -1;
 gvCurrentY = -1;
 gvCanvas = null;
 gvContext = null;
 gvWidthRange = null;
 gvHeightRange = null;
+gvZoomRange = null;
 gvCanvasDiv = null;
 gvBottomInfo = null;
 // TODO: get these from CSS
@@ -138,6 +139,23 @@ function handleCanvasMouseMove(event) {
 }
 
 function updateCanvasHolderSize() {
+  /* This would be nicer but canvas sizing appears to be wrong,
+   * which is why there is the mysterious 4 to get rid of scrollbars
+  var maxWidth = window.innerWidth - (2 * gvCanvasDiv.offsetLeft);
+  var maxHeight = window.innerHeight - gvCanvasDiv.offsetTop -
+      gvBottomInfo.clientHeight - (2 * gvBottomInfo.offsetLeft);
+  // Update width of holder div and add scroll bar if necessary
+  var width = canvasWidth();
+  var height = canvasHeight() + 4;
+  if (width > maxWidth) {
+    width = maxWidth;
+  }
+  if (height > maxHeight) {
+    height = maxHeight;
+  }
+  gvCanvasDiv.style.setProperty('height', height + 'px');
+  gvCanvasDiv.style.setProperty('width', width + 'px');
+  */
   //TODO: Refactor this horrible code!
   // Calculate max width and height. Assumes gap above and below gvBottomInfo
   // is equal to its left offset.
@@ -187,6 +205,7 @@ function updateCanvasHolderSize() {
 function updateImageSize(event) {
   gvHeight = gvHeightRange.value;
   gvWidth = gvWidthRange.value;
+  gvZoom = gvZoomRange.value;
   updateCanvasSize();
   updateCanvasHolderSize();
 }
@@ -199,6 +218,7 @@ function setupEvents() {
   gvCanvas.onmousemove = handleCanvasMouseMove;
   gvWidthRange.onchange = updateImageSize;
   gvHeightRange.onchange = updateImageSize;
+  gvZoomRange.onchange = updateImageSize;
   window.onresize = handleResize;
 }
 
@@ -206,6 +226,7 @@ function initView() {
   gvCanvas = document.getElementById('imagecanvas');
   gvWidthRange = document.getElementById('width');
   gvHeightRange = document.getElementById('height');
+  gvZoomRange = document.getElementById('zoom');
   gvCanvasDiv = document.getElementById('canvasdiv');
   gvBottomInfo = document.getElementById('bottominfo')
   if (gvHeightRange && gvWidthRange && gvCanvas && gvCanvasDiv && gvBottomInfo &&

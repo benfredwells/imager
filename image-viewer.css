@@ -19,6 +19,7 @@ body {
 
 #canvasdiv {
   background-color: red;
+  overflow: auto;
 }
 
 .pospanel {
