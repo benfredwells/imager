@@ -6,11 +6,14 @@ gvCurrentX = -1;
 gvCurrentY = -1;
 gvCanvas = null;
 gvContext = null;
+gvLoaderCanvas = null;
+gvLoaderContext = null;
 gvWidthRange = null;
 gvHeightRange = null;
 gvZoomRange = null;
 gvCanvasDiv = null;
 gvBottomInfo = null;
+gvImage = null;
 // TODO: get these from CSS
 BACKGROUND_COLOR = 'rgb(255,255,255)';
 BORDER_COLOR = 'rgb(128,128,128)';
@@ -222,6 +225,15 @@ function setupEvents() {
   window.onresize = handleResize;
 }
 
+function loadImage() {
+  var image = new Image();
+  image.onload = function() {
+    gvLoaderContext.drawImage(image, 0, 0);
+  };
+  //image.src = "test-image.jpeg";
+  image.src = "file:///Users/benwells/downloads/Hello_Kitty_Pink_2981.jpg";
+}
+
 function initView() {
   gvCanvas = document.getElementById('imagecanvas');
   gvWidthRange = document.getElementById('width');
@@ -229,13 +241,16 @@ function initView() {
   gvZoomRange = document.getElementById('zoom');
   gvCanvasDiv = document.getElementById('canvasdiv');
   gvBottomInfo = document.getElementById('bottominfo')
-  if (gvHeightRange && gvWidthRange && gvCanvas && gvCanvasDiv && gvBottomInfo &&
-      gvCanvas.getContext) {
+  gvLoaderCanvas = document.getElementById('imageloadcanvas');
+  if (gvHeightRange && gvWidthRange && gvZoomRange && gvCanvas && gvLoaderCanvas &&
+      gvCanvasDiv && gvBottomInfo && gvCanvas.getContext && gvLoaderCanvas.getContext) {
     // TODO: use DOM level 2 events
     gvContext = gvCanvas.getContext('2d');
+    gvLoaderContext = gvLoaderCanvas.getContext('2d');
     updateCanvasSize();
     updateCanvasHolderSize();
     setupEvents();
+    loadImage();
   } else {
     document.writeln("Your browser doesn't seem up to scratch, sorry");
   }
