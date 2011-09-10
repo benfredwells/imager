@@ -8,8 +8,6 @@ gvCanvas = null;
 gvContext = null;
 gvLoaderCanvas = null;
 gvLoaderContext = null;
-gvWidthRange = null;
-gvHeightRange = null;
 gvZoomRange = null;
 gvCanvasDiv = null;
 gvBottomInfo = null;
@@ -25,6 +23,8 @@ BORDER_WIDTH = 2;
 GRID_WIDTH = 1;
 HALF_BORDER = BORDER_WIDTH / 2;
 HALF_GRID = GRID_WIDTH / 2;
+// Needed to run locally
+gvRunningLocally = true
 
 function canvasWidth() {
   return (gvWidth * gvZoom) + 2 * BORDER_WIDTH - GRID_WIDTH;
@@ -205,10 +205,16 @@ function updateCanvasHolderSize() {
   }
 }
 
-function updateImageSize(event) {
-  gvHeight = gvHeightRange.value;
-  gvWidth = gvWidthRange.value;
+function updateZoom(event) {
   gvZoom = gvZoomRange.value;
+  updateCanvasSize();
+  updateCanvasHolderSize();
+}
+
+function updateImage() {
+  gvLoaderContext.drawImage(this, 0, 0);
+  gvHeight = this.height;
+  gvWidth = this.width;
   updateCanvasSize();
   updateCanvasHolderSize();
 }
@@ -217,32 +223,36 @@ function handleResize(event) {
   updateCanvasHolderSize();
 }
 
+function loadImage() {
+  var imageSrc = '';
+  if (!gvRunningLocally) {
+    var files = this.files;
+    if (files.length == 1) {
+      imageSrc = window.URL.createObjectURL(files[0]);
+    }
+  } else {
+    imageSrc = "test-image.jpeg";
+  }
+  var image = new Image();
+  image.onload = updateImage;
+  image.src = imageSrc;
+}
+
 function setupEvents() {
   gvCanvas.onmousemove = handleCanvasMouseMove;
-  gvWidthRange.onchange = updateImageSize;
-  gvHeightRange.onchange = updateImageSize;
-  gvZoomRange.onchange = updateImageSize;
+  gvZoomRange.onchange = updateZoom;
+  document.getElementById('filechooser').onchange = loadImage;
   window.onresize = handleResize;
 }
 
-function loadImage() {
-  var image = new Image();
-  image.onload = function() {
-    gvLoaderContext.drawImage(image, 0, 0);
-  };
-  //image.src = "test-image.jpeg";
-  image.src = "file:///Users/benwells/downloads/Hello_Kitty_Pink_2981.jpg";
-}
-
 function initView() {
+  window.URL = window.URL || window.webkitURL;
   gvCanvas = document.getElementById('imagecanvas');
-  gvWidthRange = document.getElementById('width');
-  gvHeightRange = document.getElementById('height');
   gvZoomRange = document.getElementById('zoom');
   gvCanvasDiv = document.getElementById('canvasdiv');
   gvBottomInfo = document.getElementById('bottominfo')
   gvLoaderCanvas = document.getElementById('imageloadcanvas');
-  if (gvHeightRange && gvWidthRange && gvZoomRange && gvCanvas && gvLoaderCanvas &&
+  if (gvZoomRange && gvCanvas && gvLoaderCanvas &&
       gvCanvasDiv && gvBottomInfo && gvCanvas.getContext && gvLoaderCanvas.getContext) {
     // TODO: use DOM level 2 events
     gvContext = gvCanvas.getContext('2d');
@@ -250,7 +260,7 @@ function initView() {
     updateCanvasSize();
     updateCanvasHolderSize();
     setupEvents();
-    loadImage();
+    //loadImage();
   } else {
     document.writeln("Your browser doesn't seem up to scratch, sorry");
   }
