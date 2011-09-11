@@ -146,13 +146,13 @@ function handleCanvasMouseMove(event) {
   // Does not work in firefox when window is scrolled :(
   // TODO: Should use a point object and put this calc into a function.
   var worldX = event.clientX - gvCanvas.offsetLeft - BORDER_WIDTH +
-               document.body.scrollLeft;
+               gvCanvasDiv.scrollLeft + document.body.scrollLeft;
   worldX = Math.floor(worldX / gvZoom);
   if (worldX < 0 || worldX >= gvWidth) {
     worldX = -1;
   }
   var worldY = event.clientY - gvCanvas.offsetTop - BORDER_WIDTH +
-               document.body.scrollTop;
+               gvCanvasDiv.scrollTop + document.body.scrollTop;
   worldY = Math.floor(worldY / gvZoom);
   if (worldY < 0 || worldY >= gvHeight) {
     worldY = -1;
