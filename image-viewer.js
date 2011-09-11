@@ -12,6 +12,7 @@ gvZoomRange = null;
 gvCanvasDiv = null;
 gvBottomInfo = null;
 gvImage = null;
+gvImageLoaded = false;
 // TODO: get these from CSS
 BACKGROUND_COLOR = 'rgb(255,255,255)';
 BORDER_COLOR = 'rgb(128,128,128)';
@@ -24,7 +25,7 @@ GRID_WIDTH = 1;
 HALF_BORDER = BORDER_WIDTH / 2;
 HALF_GRID = GRID_WIDTH / 2;
 // Needed to run locally
-gvRunningLocally = true
+gvRunningLocally = false
 
 function canvasWidth() {
   return (gvWidth * gvZoom) + 2 * BORDER_WIDTH - GRID_WIDTH;
@@ -35,10 +36,6 @@ function canvasHeight() {
 }
 
 function drawBorder() {
-  // TODO: remove this when we have a proper image
-  gvContext.fillStyle = BACKGROUND_COLOR;
-  gvContext.fillRect(0, 0, canvasWidth(), canvasHeight());
-  //
   drawRect(gvContext, BORDER_WIDTH, BORDER_COLOR, HALF_BORDER, HALF_BORDER,
       canvasWidth() - BORDER_WIDTH, canvasHeight() - BORDER_WIDTH);
 }
@@ -71,9 +68,31 @@ function drawGrid() {
   }
 }
 
+function drawImage() {
+  if (gvImageLoaded) {
+    var imageData = gvLoaderContext.getImageData(0, 0, gvWidth, gvHeight);
+    var index = 0;
+    for (var y = 0; y < gvHeight; ++y) {
+      for (var x = 0; x < gvWidth; ++x) {
+        var r = imageData.data[index++];
+        var g = imageData.data[index++];
+        var b = imageData.data[index++];
+        index++; // skip alpha
+        var fillColor = 'rgb(' + r + ',' + g+ ',' + b + ')';
+        gvContext.fillStyle = fillColor;
+        gvContext.fillRect(gridLower(x), gridLower(y), gvZoom, gvZoom);
+      }
+    }
+  } else {
+    gvContext.fillStyle = BACKGROUND_COLOR;
+    gvContext.fillRect(0, 0, canvasWidth(), canvasHeight());
+  }
+}
+
 function updateCanvasSize() {
   gvCanvas.width = canvasWidth();
   gvCanvas.height = canvasHeight();
+  drawImage();
   drawBorder();
   drawGrid();
 }
@@ -212,9 +231,12 @@ function updateZoom(event) {
 }
 
 function updateImage() {
-  gvLoaderContext.drawImage(this, 0, 0);
   gvHeight = this.height;
   gvWidth = this.width;
+  gvLoaderCanvas.width = gvWidth;
+  gvLoaderCanvas.height = gvHeight;
+  gvLoaderContext.drawImage(this, 0, 0);
+  gvImageLoaded = true;
   updateCanvasSize();
   updateCanvasHolderSize();
 }
